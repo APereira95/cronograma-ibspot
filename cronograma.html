@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronograma IB Spot - Colegio Los Arcos</title>
+    <style>
+        :root {
+            --primary: #0f2c59;
+            --primary-light: #1e4584;
+            --accent: #c59b27;
+            --bg-body: #f4f6f9;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            
+            /* Colores por asignatura */
+            --toc-bg: #eff6ff;
+            --toc-border: #bfdbfe;
+            --toc-text: #1d4ed8;
+            
+            --math-bg: #f0fdf4;
+            --math-border: #bbf7d0;
+            --math-text: #15803d;
+            
+            --mono-bg: #fefce8;
+            --mono-border: #fef08a;
+            --mono-text: #a16207;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1550px;
+            margin: 0 auto;
+        }
+
+        /* Encabezado Institucional con Logos */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 24px 36px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(15, 44, 89, 0.15);
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            border-bottom: 4px solid var(--accent);
+        }
+
+        .header-logo {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-logo img {
+            height: 90px;
+            width: auto;
+            object-fit: contain;
+            mix-blend-mode: screen;
+        }
+
+        .header-center {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+        }
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .header-title p {
+            color: #cbd5e1;
+            font-size: 1rem;
+        }
+
+        .header-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .badge-info {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Barra de Controles y Filtros */
+        .controls-bar {
+            background: var(--bg-card);
+            padding: 18px 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--border-color);
+        }
+
+        .filters-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            flex: 1;
+        }
+
+        .input-control {
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.92rem;
+            color: var(--text-main);
+            background-color: #f8fafc;
+            transition: all 0.2s;
+        }
+
+        .input-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(15, 44, 89, 0.1);
+        }
+
+        input[type="text"].input-control {
+            min-width: 250px;
+        }
+
+        .view-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background: #f8fafc;
+            color: var(--text-main);
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #e2e8f0;
+        }
+
+        .btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-print {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .btn-print:hover {
+            background: #b0891e;
+        }
+
+        /* Leyenda de Profesores y Materias */
+        .legend-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            background: white;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+
+        .legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+        }
+
+        /* Vista 1: Tabla General */
+        .table-wrapper {
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+        }
+
+        table.schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1250px;
+        }
+
+        table.schedule-table th,
+        table.schedule-table td {
+            border: 1px solid #cbd5e1;
+            padding: 10px;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        table.schedule-table thead th {
+            background-color: #f1f5f9;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .students-cell {
+            background-color: #f8fafc;
+            min-width: 185px;
+            padding: 0 !important;
+        }
+
+        .group-label {
+            background-color: var(--primary);
+            color: white;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 5px 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .student-list {
+            list-style: none;
+        }
+
+        .student-list li {
+            padding: 8px 10px;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .student-list li:last-child {
+            border-bottom: none;
+        }
+
+        .student-highlight {
+            background-color: #fef08a !important;
+            color: #854d0e !important;
+        }
+
+        /* Celdas de Sesión */
+        .session-card {
+            border-radius: 8px;
+            padding: 10px 8px;
+            font-size: 0.82rem;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 145px;
+            transition: transform 0.15s;
+        }
+
+        .session-card.toc {
+            background-color: var(--toc-bg);
+            border: 1px solid var(--toc-border);
+        }
+
+        .session-card.math {
+            background-color: var(--math-bg);
+            border: 1px solid var(--math-border);
+        }
+
+        .session-card.mono {
+            background-color: var(--mono-bg);
+            border: 1px solid var(--mono-border);
+        }
+
+        .session-card.dimmed {
+            opacity: 0.2;
+        }
+
+        .session-date {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 0.85rem;
+        }
+
+        .session-time {
+            color: #475569;
+            font-size: 0.76rem;
+        }
+
+        .session-prof {
+            font-weight: 700;
+            color: #1e293b;
+            margin-top: 2px;
+        }
+
+        .session-subj {
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.76rem;
+            margin: 2px auto;
+            display: inline-block;
+        }
+
+        .toc .session-subj { color: var(--toc-text); }
+        .math .session-subj { color: var(--math-text); }
+        .mono .session-subj { color: var(--mono-text); }
+
+        .session-loc {
+            font-weight: 700;
+            font-size: 0.78rem;
+            color: #334155;
+            margin-top: 2px;
+        }
+
+        .empty-cell {
+            background-color: #fafafa;
+        }
+
+        /* Vista 2: Tarjetas por Grupo (Ideal para Móviles) */
+        .cards-view {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 20px;
+        }
+
+        .group-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .group-card-header {
+            background: var(--primary);
+            color: white;
+            padding: 16px 20px;
+        }
+
+        .group-card-header h3 {
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+        }
+
+        .group-card-students {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .student-pill {
+            background: rgba(255,255,255,0.18);
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 500;
+        }
+
+        .group-card-body {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mobile-session-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            border-radius: 8px;
+            text-align: left;
+            gap: 12px;
+        }
+
+        /* Vista 3: Calendario Cronológico por Fecha */
+        .timeline-view {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .date-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            overflow: hidden;
+        }
+
+        .date-card-header {
+            background: #f1f5f9;
+            color: var(--primary);
+            padding: 12px 16px;
+            font-weight: 700;
+            font-size: 0.98rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .date-card-body {
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        footer {
+            margin-top: 28px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 12px;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 20px;
+                text-align: center;
+            }
+            .header-logo img {
+                height: 75px;
+            }
+            .header-title h1 {
+                font-size: 1.35rem;
+            }
+            input[type="text"].input-control {
+                min-width: 100%;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .controls-bar {
+                display: none !important;
+            }
+            header {
+                box-shadow: none;
+                padding: 14px 24px;
+                margin-bottom: 12px;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .header-logo img {
+                height: 65px;
+            }
+            .session-card, .group-label, table.schedule-table thead th {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .table-wrapper {
+                box-shadow: none;
+                overflow: visible;
+            }
+            table.schedule-table {
+                min-width: 100%;
+                font-size: 0.72rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <!-- Logo Colegio Los Arcos a la izquierda -->
+        <div class="header-logo">
+            <img src="logo-losarcos.png" alt="Logo Colegio Los Arcos">
+        </div>
+
+        <!-- Información Central -->
+        <div class="header-center">
+            <div class="header-title">
+                <h1>Cronograma de Asistencia — IB Spot</h1>
+                <p>Colegio Los Arcos • Programa del Diploma (Octubre – Diciembre 2026)</p>
+            </div>
+            <div class="header-badges">
+                <div class="badge-info">🕒 Horario: 02:30 pm - 04:30 pm</div>
+                <div class="badge-info">📅 Días: Lunes y Miércoles</div>
+            </div>
+        </div>
+
+        <!-- Logo IB a la derecha -->
+        <div class="header-logo">
+            <img src="ib-logo.png" alt="Logo IB World School">
+        </div>
+    </header>
+
+    <div class="controls-bar">
+        <div class="filters-group">
+            <input type="text" id="searchInput" class="input-control" placeholder="🔍 Buscar alumno (ej. Aitor, Gabriel, Xavier...)">
+            
+            <select id="groupFilter" class="input-control">
+                <option value="all">👥 Todos los grupos</option>
+                <option value="0">Grupo 1 (Aitor, Oliver, Gonzalo)</option>
+                <option value="1">Grupo 2 (Gabriel, Cristian, Hans, Sebastián)</option>
+                <option value="2">Grupo 3 (Neptalí, Vicente, Matias)</option>
+                <option value="3">Grupo 4 (Alan, Xavier, Francisco)</option>
+                <option value="4">Grupo 5 (Ricardo, Thomas, Guillermo)</option>
+            </select>
+
+            <select id="subjectFilter" class="input-control">
+                <option value="all">📚 Todas las asignaturas / profesores</option>
+                <option value="toc">TOC — Prof. Evelyn Arcia</option>
+                <option value="math">Matemática — Prof. Marcos La Rosa</option>
+                <option value="mono">Monografía / Lit. / Gestión — Prof. José Urdaneta</option>
+            </select>
+        </div>
+
+        <div class="view-tabs">
+            <button class="btn active" id="btnViewTable" onclick="switchView('table')">📋 Tabla General</button>
+            <button class="btn" id="btnViewCards" onclick="switchView('cards')">📱 Tarjetas por Grupo</button>
+            <button class="btn" id="btnViewTimeline" onclick="switchView('timeline')">📅 Vista por Fecha</button>
+        </div>
+    </div>
+
+    <div class="legend-bar">
+        <div class="legend-item">
+            <span class="legend-dot" style="background: var(--toc-bg); border: 2px solid var(--toc-text);"></span>
+            <span><strong>TOC:</strong> Prof. Evelyn Arcia (SUM2 / Biblioteca)</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot" style="background: var(--math-bg); border: 2px solid var(--math-text);"></span>
+            <span><strong>Matemática:</strong> Prof. Marcos La Rosa (Guayacán / 5to D)</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot" style="background: var(--mono-bg); border: 2px solid var(--mono-text);"></span>
+            <span><strong>Monografía / Literatura / Gestión Empresarial:</strong> Prof. José Urdaneta (Guayacán)</span>
+        </div>
+    </div>
+
+    <!-- VISTA 1: TABLA GENERAL -->
+    <div id="tableView" class="table-wrapper">
+        <table class="schedule-table">
+            <thead>
+                <tr>
+                    <th>Alumnos</th>
+                    <th>Sesión 1</th>
+                    <th>Sesión 2</th>
+                    <th>Sesión 3</th>
+                    <th>Sesión 4</th>
+                    <th>Sesión 5</th>
+                    <th>Sesión 6</th>
+                    <th>Sesión 7</th>
+                    <th>Sesión 8</th>
+                </tr>
+            </thead>
+            <tbody id="scheduleTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- VISTA 2: TARJETAS POR GRUPO -->
+    <div id="cardsView" class="cards-view"></div>
+
+    <!-- VISTA 3: CRONOLÓGICA POR FECHA -->
+    <div id="timelineView" class="timeline-view"></div>
+
+    <footer>
+        Coordinación del Programa del Diploma (IB) — Colegio Los Arcos • Cronograma IB Spot 2026
+    </footer>
+</div>
+
+<script>
+    const scheduleData = [
+        {
+            groupName: "Grupo 1",
+            students: ["Aitor Aguiar", "Oliver Alvarado", "Gonzalo Betancourt"],
+            sessions: [
+                { date: "Lunes 19/10/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Evelyn Arcia", subject: "TOC", type: "toc", location: "SUM2 Colegio Los Arcos" },
+                { date: "Miércoles 28/10/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Marcos La Rosa", subject: "Matemática", type: "math", location: "5to D Colegio Los Arcos" },
+                { date: "Lunes 09/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. José Urdaneta", subject: "Monografía / Literatura / Gestión Empresarial", type: "mono", location: "Guayacan" },
+                { date: "Miércoles 11/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Evelyn Arcia", subject: "TOC", type: "toc", location: "Biblioteca Colegio Los Arcos" },
+                { date: "Lunes 16/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Marcos La Rosa", subject: "Matemática", type: "math", location: "Guayacan" },
+                { date: "Miércoles 25/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Evelyn Arcia", subject: "TOC", type: "toc", location: "Biblioteca Colegio Los Arcos" },
+                { date: "Lunes 30/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. José Urdaneta", subject: "Monografía / Literatura / Gestión Empresarial", type: "mono", location: "Guayacan" },
+                { date: "Lunes 07/12/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Evelyn Arcia", subject: "TOC", type: "toc", location: "SUM2 Colegio Los Arcos" }
+            ]
+        },
+        {
+            groupName: "Grupo 2",
+            students: ["Gabriel Arreaza", "Cristian Alonso", "Hans Montenegro", "Sebastián Duque"],
+            sessions: [
+                { date: "Lunes 19/10/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Marcos La Rosa", subject: "Matemática", type: "math", location: "Guayacan" },
+                { date: "Lunes 26/10/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. José Urdaneta", subject: "Monografía / Literatura / Gestión Empresarial", type: "mono", location: "Guayacan" },
+                { date: "Miércoles 04/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Evelyn Arcia", subject: "TOC", type: "toc", location: "Biblioteca Colegio Los Arcos" },
+                { date: "Miércoles 11/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Marcos La Rosa", subject: "Matemática", type: "math", location: "Guayacan" },
+                { date: "Miércoles 18/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Evelyn Arcia", subject: "TOC", type: "toc", location: "Biblioteca Colegio Los Arcos" },
+                { date: "Miércoles 25/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Marcos La Rosa", subject: "Matemática", type: "math", location: "Guayacan" },
+                { date: "Miércoles 02/12/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Marcos La Rosa", subject: "Matemática", type: "math", location: "Guayacan" },
+                { date: "Lunes 07/12/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. José Urdaneta", subject: "Monografía / Literatura / Gestión Empresarial", type: "mono", location: "Guayacan" }
+            ]
+        },
+        {
+            groupName: "Grupo 3",
+            students: ["Neptalí Balza", "Vicente Catalan", "Matias De Aguiar"],
+            sessions: [
+                { date: "Lunes 19/10/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. José Urdaneta", subject: "Monografía / Literatura / Gestión Empresarial", type: "mono", location: "Guayacan" },
+                { date: "Miércoles 28/10/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Evelyn Arcia", subject: "TOC", type: "toc", location: "Biblioteca Colegio Los Arcos" },
+                { date: "Miércoles 04/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Marcos La Rosa", subject: "Matemática", type: "math", location: "5to D Colegio Los Arcos" },
+                { date: "Lunes 16/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Evelyn Arcia", subject: "TOC", type: "toc", location: "SUM2 Colegio Los Arcos" },
+                { date: "Lunes 23/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Marcos La Rosa", subject: "Matemática", type: "math", location: "Guayacan" },
+                { date: "Lunes 30/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Evelyn Arcia", subject: "TOC", type: "toc", location: "SUM2 Colegio Los Arcos" }
+            ]
+        },
+        {
+            groupName: "Grupo 4",
+            students: ["Alan Jhonson", "Xavier Pérez", "Francisco Yepes"],
+            sessions: [
+                { date: "Miércoles 21/10/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Marcos La Rosa", subject: "Matemática", type: "math", location: "5to D Colegio Los Arcos" },
+                { date: "Lunes 26/10/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Evelyn Arcia", subject: "TOC", type: "toc", location: "SUM2 Colegio Los Arcos" },
+                { date: "Lunes 09/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Marcos La Rosa", subject: "Matemática", type: "math", location: "Guayacan" },
+                { date: "Lunes 16/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. José Urdaneta", subject: "Monografía / Literatura / Gestión Empresarial", type: "mono", location: "Guayacan" },
+                { date: "Lunes 23/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Evelyn Arcia", subject: "TOC", type: "toc", location: "SUM2 Colegio Los Arcos" },
+                { date: "Lunes 30/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Marcos La Rosa", subject: "Matemática", type: "math", location: "Guayacan" },
+                { date: "Miércoles 02/12/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Evelyn Arcia", subject: "TOC", type: "toc", location: "Biblioteca Colegio Los Arcos" }
+            ]
+        },
+        {
+            groupName: "Grupo 5",
+            students: ["Ricardo Pico", "Thomas Power", "Guillermo Rad"],
+            sessions: [
+                { date: "Miércoles 21/10/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Evelyn Arcia", subject: "TOC", type: "toc", location: "Biblioteca Colegio Los Arcos" },
+                { date: "Lunes 26/10/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Marcos La Rosa", subject: "Matemática", type: "math", location: "Guayacan" },
+                { date: "Lunes 09/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Evelyn Arcia", subject: "TOC", type: "toc", location: "SUM2 Colegio Los Arcos" },
+                { date: "Miércoles 18/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Marcos La Rosa", subject: "Matemática", type: "math", location: "Guayacan" },
+                { date: "Lunes 23/11/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. José Urdaneta", subject: "Monografía / Literatura / Gestión Empresarial", type: "mono", location: "Guayacan" },
+                { date: "Lunes 07/12/2026", time: "IBSpot 02:30 - 04:30pm", prof: "Prof. Marcos La Rosa", subject: "Matemática", type: "math", location: "Guayacan" }
+            ]
+        }
+    ];
+
+    const maxCols = 8;
+
+    function normalizeText(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    function renderAll() {
+        const searchQuery = normalizeText(document.getElementById('searchInput').value.trim());
+        const selectedGroup = document.getElementById('groupFilter').value;
+        const selectedSubject = document.getElementById('subjectFilter').value;
+
+        renderTable(searchQuery, selectedGroup, selectedSubject);
+        renderCards(searchQuery, selectedGroup, selectedSubject);
+        renderTimeline(searchQuery, selectedGroup, selectedSubject);
+    }
+
+    function renderTable(searchQuery, selectedGroup, selectedSubject) {
+        const tbody = document.getElementById('scheduleTableBody');
+        tbody.innerHTML = '';
+
+        scheduleData.forEach((group, groupIdx) => {
+            if (selectedGroup !== 'all' && parseInt(selectedGroup) !== groupIdx) return;
+
+            const matchesStudent = searchQuery === '' || group.students.some(s => normalizeText(s).includes(searchQuery));
+            if (!matchesStudent) return;
+
+            const tr = document.createElement('tr');
+
+            // Columna de Alumnos
+            const tdStudents = document.createElement('td');
+            tdStudents.className = 'students-cell';
+            let studentsHtml = `<div class="group-label">${group.groupName}</div><ul class="student-list">`;
+            group.students.forEach(student => {
+                const isHighlighted = searchQuery !== '' && normalizeText(student).includes(searchQuery);
+                studentsHtml += `<li class="${isHighlighted ? 'student-highlight' : ''}">${student}</li>`;
+            });
+            studentsHtml += `</ul>`;
+            tdStudents.innerHTML = studentsHtml;
+            tr.appendChild(tdStudents);
+
+            // Columnas de Sesiones (8 columnas)
+            for (let i = 0; i < maxCols; i++) {
+                const td = document.createElement('td');
+                const session = group.sessions[i];
+                if (session) {
+                    const dimmed = selectedSubject !== 'all' && session.type !== selectedSubject;
+                    td.innerHTML = `
+                        <div class="session-card ${session.type} ${dimmed ? 'dimmed' : ''}">
+                            <div class="session-date">${session.date}</div>
+                            <div class="session-time">${session.time}</div>
+                            <div class="session-prof">${session.prof}</div>
+                            <div class="session-subj">${session.subject}</div>
+                            <div class="session-loc">${session.location}</div>
+                        </div>
+                    `;
+                } else {
+                    td.className = 'empty-cell';
+                }
+                tr.appendChild(td);
+            }
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderCards(searchQuery, selectedGroup, selectedSubject) {
+        const container = document.getElementById('cardsView');
+        container.innerHTML = '';
+
+        scheduleData.forEach((group, groupIdx) => {
+            if (selectedGroup !== 'all' && parseInt(selectedGroup) !== groupIdx) return;
+            const matchesStudent = searchQuery === '' || group.students.some(s => normalizeText(s).includes(searchQuery));
+            if (!matchesStudent) return;
+
+            const card = document.createElement('div');
+            card.className = 'group-card';
+
+            const pills = group.students.map(s => `<span class="student-pill">${s}</span>`).join('');
+            let sessionsHtml = '';
+
+            group.sessions.forEach(session => {
+                if (selectedSubject !== 'all' && session.type !== selectedSubject) return;
+                sessionsHtml += `
+                    <div class="session-card ${session.type} mobile-session-item">
+                        <div>
+                            <div class="session-date">${session.date}</div>
+                            <div class="session-time">${session.time}</div>
+                            <div class="session-prof">${session.prof}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="session-subj">${session.subject}</div>
+                            <div class="session-loc">📍 ${session.location}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            card.innerHTML = `
+                <div class="group-card-header">
+                    <h3>${group.groupName}</h3>
+                    <div class="group-card-students">${pills}</div>
+                </div>
+                <div class="group-card-body">
+                    ${sessionsHtml || '<p style="color:#64748b;font-size:0.9rem;">No hay sesiones con este filtro.</p>'}
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function renderTimeline(searchQuery, selectedGroup, selectedSubject) {
+        const container = document.getElementById('timelineView');
+        container.innerHTML = '';
+
+        const dateOrder = [
+            "Lunes 19/10/2026",
+            "Miércoles 21/10/2026",
+            "Lunes 26/10/2026",
+            "Miércoles 28/10/2026",
+            "Miércoles 04/11/2026",
+            "Lunes 09/11/2026",
+            "Miércoles 11/11/2026",
+            "Lunes 16/11/2026",
+            "Miércoles 18/11/2026",
+            "Lunes 23/11/2026",
+            "Miércoles 25/11/2026",
+            "Lunes 30/11/2026",
+            "Miércoles 02/12/2026",
+            "Lunes 07/12/2026"
+        ];
+
+        dateOrder.forEach(dateStr => {
+            const entries = [];
+            scheduleData.forEach((group, groupIdx) => {
+                if (selectedGroup !== 'all' && parseInt(selectedGroup) !== groupIdx) return;
+                const matchesStudent = searchQuery === '' || group.students.some(s => normalizeText(s).includes(searchQuery));
+                if (!matchesStudent) return;
+
+                group.sessions.forEach(session => {
+                    if (session.date === dateStr) {
+                        if (selectedSubject === 'all' || session.type === selectedSubject) {
+                            entries.push({ group, session });
+                        }
+                    }
+                });
+            });
+
+            if (entries.length === 0) return;
+
+            const card = document.createElement('div');
+            card.className = 'date-card';
+
+            let itemsHtml = '';
+            entries.forEach(({ group, session }) => {
+                itemsHtml += `
+                    <div class="session-card ${session.type}" style="text-align:left; padding:10px 12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong style="color:var(--primary); font-size:0.88rem;">${group.groupName}</strong>
+                            <span class="session-subj">${session.subject}</span>
+                        </div>
+                        <div style="font-size:0.8rem; color:#334155; margin:3px 0;">
+                            <strong>Alumnos:</strong> ${group.students.join(', ')}
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:0.78rem; color:#475569; margin-top:4px;">
+                            <span>👤 ${session.prof}</span>
+                            <span>📍 <strong>${session.location}</strong></span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            card.innerHTML = `
+                <div class="date-card-header">
+                    <span>📅 ${dateStr}</span>
+                    <span style="font-size:0.78rem; font-weight:500; color:#475569;">02:30 - 04:30 pm</span>
+                </div>
+                <div class="date-card-body">
+                    ${itemsHtml}
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function switchView(view) {
+        document.getElementById('tableView').style.display = view === 'table' ? 'block' : 'none';
+        document.getElementById('cardsView').style.display = view === 'cards' ? 'grid' : 'none';
+        document.getElementById('timelineView').style.display = view === 'timeline' ? 'grid' : 'none';
+
+        document.getElementById('btnViewTable').classList.toggle('active', view === 'table');
+        document.getElementById('btnViewCards').classList.toggle('active', view === 'cards');
+        document.getElementById('btnViewTimeline').classList.toggle('active', view === 'timeline');
+    }
+
+    document.getElementById('searchInput').addEventListener('input', renderAll);
+    document.getElementById('groupFilter').addEventListener('change', renderAll);
+    document.getElementById('subjectFilter').addEventListener('change', renderAll);
+
+    renderAll();
+</script>
+
+</body>
+</html>
